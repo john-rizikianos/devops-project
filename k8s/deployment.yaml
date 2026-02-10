@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
       - name: tomcat-app
-        image: your-dockerhub-username/bookstore-app:latest
+        image: ioannisrzk/bookstore-app:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
