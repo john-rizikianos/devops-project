@@ -36,4 +36,7 @@ openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
   #apply ingress.yaml
   kubectl apply -f k8s/ingress.yaml
   
-  
+  # View MailHog UI
+  kubectl port-forward svc/mailhog 8026:8025
+  #access:
+  http://localhost:8026

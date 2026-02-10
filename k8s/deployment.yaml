@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tomcat-app
+  name: tomcat
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tomcat-app
+      app: tomcat
   template:
     metadata:
       labels:
-        app: tomcat-app
+        app: tomcat
     spec:
       containers:
-      - name: tomcat-app
+      - name: tomcat
         # Make sure this matches your Docker Hub username
         image: johnrizikianos/bookstore-app:latest
         imagePullPolicy: Always
