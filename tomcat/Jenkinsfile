@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Build Maven') {
             steps {
-                dir('tomcat') { 
+                dir('tomcat/app') { 
                     sh 'mvn clean package -DskipTests'
                 }
             }
@@ -37,3 +37,4 @@ pipeline {
         }
     }
 }
+
