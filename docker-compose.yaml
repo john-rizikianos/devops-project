@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  # --- Component 1: Database (Replaces SQLite) ---
+  # Why: Required for scaling in Kubernetes later.
+  database:
+    image: postgres:15-alpine
+    container_name: bookstore-db
+    environment:
+      POSTGRES_DB: bookstore
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Automatically runs .sql files in this folder on startup
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - bookstore-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d bookstore"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  tomcat:
+    build: 
+      context: ./tomcat  # Points to the subfolder in monorepo
+    container_name: tomcat-app
+    ports:
+      - "8081:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      # Update your Java app to read these env vars instead of hardcoded paths
+      DB_URL: jdbc:postgresql://database:5432/bookstore
+      DB_USER: admin
+      DB_PASS: password123
+      SMTP_HOST: mailhog
+      SMTP_PORT: 1025
+    networks:
+      - bookstore-net
+
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog-email
+    ports:
+      - "1025:1025"  # SMTP port 
+      - "8025:8025"  # Web UI 
+    networks:
+      - bookstore-net
+
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: keycloak-auth
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://database:5432/bookstore
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: password123
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8180:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - bookstore-net
+
+volumes:
+  postgres_data:  # Named volume for persistence
+
+networks:
+  bookstore-net:
+    driver: bridge
