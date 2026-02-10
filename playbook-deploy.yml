@@ -1,0 +1,44 @@
+---
+- name: Deploy Bookstore App via Docker Compose
+  hosts: localhost  
+  connection: local
+  become: yes       
+
+  tasks:
+    - name: Install Docker 
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install Docker Compose
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Create Project Directory
+      file:
+        path: /opt/bookstore-project
+        state: directory
+        mode: '0755'
+
+    - name: Copy Docker Compose File
+      copy:
+        src: ./docker-compose.yml
+        dest: /opt/bookstore-project/docker-compose.yml
+
+    - name: Copy Database Init Script
+      copy:
+        src: ./database/
+        dest: /opt/bookstore-project/database/
+
+    - name: Tear Down Existing Containers
+      command: docker-compose down
+      args:
+        chdir: /opt/bookstore-project
+
+    - name: Start Containers
+      command: docker-compose up -d --build
+      args:
+        chdir: /opt/bookstore-project

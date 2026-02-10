@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailhog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailhog
+  template:
+    metadata:
+      labels:
+        app: mailhog
+    spec:
+      containers:
+      - name: mailhog
+        image: mailhog/mailhog
+        ports:
+        - containerPort: 1025 # SMTP
+        - containerPort: 8025 # Web UI
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailhog
+spec:
+  type: NodePort
+  ports:
+  - port: 1025
+    name: smtp
+  - port: 8025
+    name: http
+    nodePort: 30002 # Fixed port for browser access
+  selector:
+    app: mailhog

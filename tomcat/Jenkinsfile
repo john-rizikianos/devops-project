@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    environment {
+        // Change this to your Docker Hub username
+        DOCKER_IMAGE = "john-rizikianos/bookstore-app"
+        DOCKER_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Build Maven') {
+            steps {
+                dir('tomcat') { 
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Uses the Dockerfile in the 'tomcat' folder 
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} -f tomcat/Dockerfile ."
+                }
+            }
+        }
+
+        stage('Push to Registry') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    }
+                }
+            }
+        }
+    }
+}
