@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2-proxy
+    spec:
+      # --- DNS TRICK: Pod needs to find Keycloak internally ---
+      hostAliases:
+      - ip: "192.168.49.2"        # <--- YOUR MINIKUBE IP
+        hostnames:
+        - "auth.bookstore.uat"
+      # --------------------------------------------------------
+      containers:
+      - name: oauth2-proxy
+        image: quay.io/oauth2-proxy/oauth2-proxy:latest
+        env:
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          value: "[YOUR_KEYCLOAK_CLIENT_SECRET]"
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          value: "[YOUR_GENERATED_COOKIE_SECRET]"
+        args:
+          - --provider=keycloak-oidc
+          - --client-id=bookstore-app
+          # The Proxy asks Keycloak (at auth.bookstore.uat) if the user is valid
+          - --oidc-issuer-url=http://auth.bookstore.uat/realms/bookstore
+          - --http-address=0.0.0.0:4180
+          - --upstream=http://tomcat-service:8080
+          - --email-domain=*
+          - --cookie-secure=false
+          # The Proxy sends the user back to the App (at bookstore.uat)
+          - --redirect-url=http://bookstore.uat/oauth2/callback
+        ports:
+        - containerPort: 4180
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2-proxy-service
+spec:
+  selector:
+    app: oauth2-proxy
+  ports:
+  - port: 4180
+    targetPort: 4180

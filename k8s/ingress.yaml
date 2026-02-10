@@ -3,22 +3,40 @@ kind: Ingress
 metadata:
   name: bookstore-ingress
   annotations:
-    # Tell NGINX to handle this traffic
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
   - hosts:
-      - bookstore.local
+      - bookstore.uat
     secretName: bookstore-tls-secret
   rules:
-  - host: bookstore.local
+  - host: bookstore.uat     # <--- The App Domain
     http:
       paths:
+      # 1. ADMIN (Protected): Goes to Proxy
+      - path: /admin
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy-service
+            port:
+              number: 4180
+      
+      # 2. OAUTH CALLBACK (Public): Goes to Proxy to finish login
+      - path: /oauth2
+        pathType: Prefix
+        backend:
+          service:
+            name: oauth2-proxy-service
+            port:
+              number: 4180
+
+      # 3. STORE (Public): Goes straight to Tomcat
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: tomcat-service  
+            name: tomcat-service
             port:
-              number: 8080        
+              number: 8080

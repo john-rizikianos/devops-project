@@ -9,7 +9,8 @@ import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import jakarta.servlet.annotation.WebServlet;
 
-@WebServlet("/products")
+//@WebServlet("/products")
+@WebServlet(urlPatterns = {"/products", "/admin"})
 public class ProductServlet extends HttpServlet {
 
     private String dbUrl;
@@ -54,13 +55,20 @@ public class ProductServlet extends HttpServlet {
         return DriverManager.getConnection(dbUrl, dbUser, dbPass);
     }
 
-    @Override
+@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String path = req.getServletPath();
+        
+        // 1. If URL is /admin, show Admin Screen
+        if (path.equals("/admin")) {
+            getAdminScreen(resp);
+            return;
+        }
+
+        // 2. Otherwise, treat as /products (Storefront)
         String action = req.getParameter("action");
         if (action == null || action.equals("list")) {
             getProducts(resp);
-        } else if (action.equals("admin")) {
-            getAdminScreen(resp);
         } else {
             resp.getWriter().println("Unknown action: " + action);
         }
@@ -93,7 +101,8 @@ public class ProductServlet extends HttpServlet {
             PrintWriter out = resp.getWriter();
             out.println("<html><head><title>Bookstore</title></head><body>");
             out.println("<h1>Bookstore Inventory</h1>");
-            out.println("<p><a href='products?action=admin'>[Go to Admin Mode]</a></p>");
+            //out.println("<p><a href='products?action=admin'>[Go to Admin Mode]</a></p>");
+            out.println("<p><a href='admin'>[Go to Admin Mode]</a></p>");
             out.println("<table border='1'><tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Action</th></tr>");
             
             while (rs.next()) {

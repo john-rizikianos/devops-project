@@ -13,3 +13,6 @@ docker compose up -d
 
 # clean up
 docker image prune -f
+#port forwarding
+kubectl port-forward svc/keycloak 8087:8080 &
+kubectl port-forward svc/mailhog 8026:8025 &
