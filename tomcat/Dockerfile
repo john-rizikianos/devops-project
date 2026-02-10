@@ -3,11 +3,11 @@ FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # 1. Copy the project definition first (for better caching)
-COPY pom.xml .
+COPY app/pom.xml .
 
 # 2. Copy  source code
 
-COPY src ./src
+COPY app/src ./src
 
 # 3. Build the WAR file
 
