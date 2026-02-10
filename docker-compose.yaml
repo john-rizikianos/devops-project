@@ -1,8 +1,7 @@
 version: "3.8"
 
 services:
-  # --- Component 1: Database (Replaces SQLite) ---
-  # Why: Required for scaling in Kubernetes later.
+  # --- Component 1: Database ---
   database:
     image: postgres:15-alpine
     container_name: bookstore-db
@@ -33,7 +32,6 @@ services:
       database:
         condition: service_healthy
     environment:
-      # Update your Java app to read these env vars instead of hardcoded paths
       DB_URL: jdbc:postgresql://database:5432/bookstore
       DB_USER: admin
       DB_PASS: password123

@@ -38,6 +38,12 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to Local Docker') {
+            steps {
+                // SSH into localhost and execute the script
+                sh "ssh -o StrictHostKeyChecking=no johnuntu@localhost '/home/johnuntu/Documents/hua/devops/project-devops/deploy.sh'"
+            }
+        }
     }
 }
 
