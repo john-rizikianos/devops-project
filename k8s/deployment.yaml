@@ -20,7 +20,7 @@ spec:
         - containerPort: 8080
         env:
         - name: DB_URL
-          value: "jdbc:postgresql://postgres-service:5432/bookstore"
+          value: "jdbc:postgresql://database:5432/bookstore"
         - name: DB_USER
           value: "admin"
         - name: DB_PASS
