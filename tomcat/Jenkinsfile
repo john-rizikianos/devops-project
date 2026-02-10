@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Change this to your Docker Hub username
-        DOCKER_IMAGE = "john-rizikianos/bookstore-app"
+        //  Docker Hub username
+        DOCKER_IMAGE = "ioannisrzk/bookstore-app"
         DOCKER_TAG = "${BUILD_NUMBER}"
     }
 
