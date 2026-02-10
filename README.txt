@@ -16,6 +16,9 @@ kubectl apply -f k8s/keycloak.yaml
 # 3. Apply the Main App
 kubectl apply -f k8s/deployment.yaml
 
+# access database
+kubectl exec -it database-7564bf856f-fskbk -- psql -U admin -d bookstore
+
 
 # get url
 minikube service tomcat-service --url
