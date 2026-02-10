@@ -14,6 +14,7 @@ spec:
     spec:
       containers:
       - name: tomcat
+        # Make sure this matches your Docker Hub image/tag
         image: ioannisrzk/bookstore-app:latest
         imagePullPolicy: Always
         ports:
