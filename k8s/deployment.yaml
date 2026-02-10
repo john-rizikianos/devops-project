@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: tomcat
-        # Make sure this matches your Docker Hub username
-        image: johnrizikianos/bookstore-app:latest
+        image: ioannisrzk/bookstore-app:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
