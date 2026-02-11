@@ -14,7 +14,7 @@ spec:
       containers:
       - name: keycloak
         image: quay.io/keycloak/keycloak:23.0
-        args: ["start-dev"]
+        args: ["start-dev", "--import-realm"]
         env:
         - name: KEYCLOAK_ADMIN
           value: "admin"
@@ -22,6 +22,14 @@ spec:
           value: "admin"
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /opt/keycloak/data/import
+          readOnly: true
+      volumes:
+      - name: config-volume
+        configMap:
+          name: keycloak-config
 ---
 apiVersion: v1
 kind: Service
