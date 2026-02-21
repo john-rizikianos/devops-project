@@ -23,9 +23,9 @@ spec:
         image: quay.io/oauth2-proxy/oauth2-proxy:latest
         env:
         - name: OAUTH2_PROXY_CLIENT_SECRET
-          value: "TqRboYgPojy4UZUqr5PZUIVHlb0QXwBz"
+          value: "oDYIIOgLp2fuDaXU50ERFeyWHoLMlRHR"
         - name: OAUTH2_PROXY_COOKIE_SECRET
-          value: "Guy/asvGRUbq3l19VsAXQBqo1i4gUGGv"
+          value: "oDYIIOgLp2fuDaXU50ERFeyWHoLMlRHR"
         args:
           - --provider=keycloak-oidc
           - --client-id=bookstore-app
