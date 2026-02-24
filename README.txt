@@ -9,3 +9,13 @@ minikube get pods -w
 #stop all services
 minikube stop
 docker compose down
+
+docker urls:
+http://localhost:8081/products
+http://localhost:8025/
+http://localhost:8180/
+
+k8s urls:
+https://bookstore.uat/
+https://bookstore.uat/products
+https://auth.bookstore.uat/

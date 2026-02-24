@@ -4,6 +4,8 @@ metadata:
   name: bookstore-ingress
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "4" 
 spec:
   ingressClassName: nginx
   tls:
@@ -37,6 +39,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: tomcat-service
+            name: tomcat
             port:
               number: 8080
